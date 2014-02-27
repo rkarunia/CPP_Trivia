@@ -44,15 +44,14 @@ int main (int argc, const char** argv)
 
   srand (888);
  
-  cout<<"N: "<<n<<endl;
-
+  //cout<<"N: "<<n<<endl;
   //if ((n<1) || (n>500001)) exit(-1);
   
-  //int a[n];
-  //int b[n];
-  //int c[n];
-  //int d[n];
-  //int e[n];
+  int a[n];
+  int b[n];
+  int c[n];
+  int d[n];
+  int e[n];
 
   char chr[26];
   chr[10] = 'a';
@@ -87,16 +86,16 @@ int main (int argc, const char** argv)
   for (int i=0; i<n; ++i)
     {
       int r = rand()%n;
-      //a[i] = r;
-      //b[i] = r;
-      //c[i] = r;
-      //d[i] = r;
-      //e[i] = r;
+      a[i] = r;
+      b[i] = r;
+      c[i] = r;
+      d[i] = r;
+      e[i] = r;
     }
 
-  //for (int i=0; i<20; ++i)
-  //cout<<a[i]<<" ";
-  //cout<<endl;
+  for (int i=0; i<20; ++i)
+    cout<<a[i]<<" ";
+  cout<<endl;
 
   clock_t start = clock();
   bblSort(chr, 26, descend_compar);
@@ -106,43 +105,43 @@ int main (int argc, const char** argv)
   cout<<endl;
   cout<<"BUBBLE SORT DURATION FOR "<<26<<" ITEMS IS: "<<duration<<" SECONDS."<<endl;
 
-  //clock_t start = clock();
-  //bblSort(chr, 26, ascend_compar);
-  //duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-  //for (int i=0; i<20; ++i)
-  //cout<<a[i]<<" ";
-  //cout<<endl;
-  //cout<<"BUBBLE SORT DURATION FOR "<<n<<" ITEMS IS: "<<duration<<" SECONDS."<<endl;
+  start = clock();
+  bblSort(chr, 26, ascend_compar);
+  duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+  for (int i=0; i<20; ++i)
+    cout<<a[i]<<" ";
+  cout<<endl;
+  cout<<"BUBBLE SORT DURATION FOR "<<n<<" ITEMS IS: "<<duration<<" SECONDS."<<endl;
   
   start = clock();
-  //insSort(b, n, ascend_compar);
+  insSort(b, n, ascend_compar);
   duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-  //for (int i=0; i<20; ++i)
-  //cout<<b[i]<<" ";
-  //cout<<endl;
+  for (int i=0; i<20; ++i)
+    cout<<b[i]<<" ";
+  cout<<endl;
   cout<<"INSERTION SORT DURATION FOR "<<n<<" ITEMS IS: "<<duration<<" SECONDS."<<endl;
   
   start = clock();
-  //mrgSort(c, 0, n-1, ascend_compar);
-  //duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-  //for (int i=0; i<20; ++i)
-  //cout<<c[i]<<" ";
-  //cout<<endl;
+  mrgSort(c, 0, n-1, ascend_compar);
+  duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+  for (int i=0; i<20; ++i)
+    cout<<c[i]<<" ";
+  cout<<endl;
   cout<<"MERGE SORT DURATION FOR "<<n<<" ITEMS IS: "<<duration<<" SECONDS."<<endl;
   
   start = clock();
-  //selSort(d, n, ascend_compar);
+  selSort(d, n, ascend_compar);
   duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-  //for (int i=0; i<20; ++i)
-  //cout<<d[i]<<" ";
-  //cout<<endl;
+  for (int i=0; i<20; ++i)
+    cout<<d[i]<<" ";
+  cout<<endl;
   cout<<"SELECTION SORT DURATION FOR "<<n<<" ITEMS IS: "<<duration<<" SECONDS."<<endl;
 
   start = clock();
-  //qwkSort(e, 0, n-1, ascend_compar);
-  //duration = (clock() - start) / (double) CLOCKS_PER_SEC;
-  //for (int i=0; i<20; ++i)
-  //cout<<e[i]<<" ";
-  //cout<<endl;
+  qwkSort(e, 0, n-1, ascend_compar);
+  duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+  for (int i=0; i<20; ++i)
+    cout<<e[i]<<" ";
+  cout<<endl;
   cout<<"QUICK SORT DURATION FOR "<<n<<" ITEMS IS: "<<duration<<" SECONDS."<<endl;
 }
