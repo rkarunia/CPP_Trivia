@@ -27,6 +27,14 @@ int main (int argc, const char** argv)
   TS.postOrderTraverse(printItem);
   std::cout<<std::endl;
 
+  TS.remove(40);
+  TS.preOrderTraverse(printItem);
+  std::cout<<std::endl;
+  TS.inOrderTraverse(printItem);
+  std::cout<<std::endl; 
+  TS.postOrderTraverse(printItem);
+  std::cout<<std::endl;
+
   T1.setRootData(40);
   T1.attachLeft(30);
   T1.attachRight(50);
