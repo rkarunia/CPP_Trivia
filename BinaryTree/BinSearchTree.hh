@@ -8,46 +8,49 @@
 
 using namespace std;
 
-
 template <class T>
 class BinSearchTree : public BinTree<T>
 {
 public:
 
-  virtual void insert (T item);
+  virtual bool insert (T item);
   virtual bool remove (T item);
   virtual bool retrieve (T item);
 
 protected:
 
-  void insertItem (treeNode<T>*& node, T item);
+  bool insertItem (treeNode<T>*& node, T item);
   void deleteLeftMostNodeFromRightSubTree (treeNode<T>*& node, T& item);
   bool deleteItem (treeNode<T>*& node, T item);
   treeNode<T>* retrieveItem (treeNode<T> *node, T item);
 };
 
 template <class T>
-void BinSearchTree<T>::insert (T item)
+bool BinSearchTree<T>::insert (T item)
 { 
   if (!BinTree<T>::rootPtr())
     {
       BinTree<T>::setRootData(item);
-      return;
+      return false;
     }
   treeNode<T>* root = BinTree<T>::rootPtr();
-  insertItem (root, item); 
+  return insertItem (root, item); 
 }
 
 template <class T>
-void BinSearchTree<T>::insertItem (treeNode<T>*& node, T item)
+bool BinSearchTree<T>::insertItem (treeNode<T>*& node, T item)
 { 
   if (!node)
-    node = new treeNode<T> (item, 0, 0);
-    
+    {
+      node = new treeNode<T> (item, 0, 0);
+      return true;
+    }
   if (item < node->item)
-    insertItem (node->leftChild, item);
+    return insertItem (node->leftChild, item);
   else if (item > node->item)
-    insertItem (node->rightChild, item);
+    return insertItem (node->rightChild, item);
+  else if (item == node->item)
+    return false;
 }
 
 template <class T>

@@ -3,6 +3,11 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <queue>
+#include <stack>
+#include <iostream>
+
+using namespace std;
 
 template <class T>
 struct treeNode
@@ -49,14 +54,18 @@ public:
   virtual BinTree rightSubTree ();
   
   // Traversal
-  virtual void preOrderTraverse (void (*func) (T&));
-  virtual void inOrderTraverse (void (*func) (T&));  
-  virtual void postOrderTraverse (void (*func) (T&));
+  virtual void preOrderTraverse (void (*func) (T&), bool recur=true);
+  virtual void inOrderTraverse (void (*func) (T&), bool recur=true);  
+  virtual void postOrderTraverse (void (*func) (T&), bool recur=true);
+  virtual void levelOrderTraverse (void (*func)(T&));
 
   // Overload
   virtual void operator= (const BinTree& atree);
 
+  void printTreeLevelOrder ();
+
 protected:
+
   BinTree (treeNode<T> *node);
   void copyTree (treeNode<T> *tree, treeNode<T>*& newTree);
   void destroyTree (treeNode<T>*& tree);
@@ -67,8 +76,14 @@ protected:
   void preOrder (treeNode<T> *tree, void (*func) (T&));
   void inOrder (treeNode<T> *tree, void (*func) (T&));
   void postOrder (treeNode<T> *tree, void (*func) (T&));
+  void levelOrder (treeNode<T> *tree, void (*func) (T&));
+  void inOrderNonRecursive (treeNode<T> *tree, void (*func) (T&));
+  void preOrderNonRecursive (treeNode<T> *tree, void (*func) (T&));
+  void postOrderNonRecursive (treeNode<T> *tree, void (*func) (T&));
+  void postOrderNonRecursiveB (treeNode<T> *tree, void (*func) (T&));
 
 private:
+
   treeNode<T>* root;
 };
 
@@ -233,21 +248,34 @@ BinTree<T> BinTree<T>::rightSubTree ()
   
 // Traversal
 template <class T>
-void BinTree<T>::preOrderTraverse (void (*func) (T& item))
+void BinTree<T>::preOrderTraverse (void (*func) (T& item), bool recur)
 {
-  preOrder(root, func);
+  if (!recur) preOrderNonRecursive (root, func);
+  else preOrder(root, func);
 }
 
 template <class T>
-void BinTree<T>::inOrderTraverse (void (*func) (T& item))
+void BinTree<T>::inOrderTraverse (void (*func) (T& item), bool recur)
 {
-  inOrder(root, func);
+  if (!recur)
+    inOrderNonRecursive (root, func);
+  else
+    inOrder(root, func);
 }
 
 template <class T>
-void BinTree<T>::postOrderTraverse (void (*func) (T& item))
+void BinTree<T>::postOrderTraverse (void (*func) (T& item), bool recur)
 {
-  postOrder(root, func);
+  if (!recur)
+    postOrderNonRecursive (root, func);
+  else
+    postOrder(root, func);
+}
+
+template <class T>
+void BinTree<T>::levelOrderTraverse (void (*func) (T& item))
+{
+  levelOrder(root, func);
 }
 
 // Overload
@@ -331,6 +359,159 @@ void BinTree<T>::inOrder (treeNode<T> *tree, void (*func) (T& item))
 }
 
 template <class T>
+void BinTree<T>::preOrderNonRecursive (treeNode<T> *tree, void (*func) (T& item))
+{
+  if (!tree)
+    return;
+
+  treeNode<T>* node = root;
+  stack<treeNode<T>*> nodeStack;
+
+  if(node)
+    nodeStack.push(node);
+  
+  while (!nodeStack.empty())
+    {
+      if(node)
+	{
+	  func(node->item);
+	  node = node->leftChild;
+	  if (node)
+	    nodeStack.push(node);
+	}
+      else
+	{
+	  node = nodeStack.top();
+	  nodeStack.pop();
+	  node = node->rightChild;
+	  if (node)
+	    nodeStack.push(node);
+	}
+    }
+}
+
+template <class T>
+void BinTree<T>::inOrderNonRecursive (treeNode<T> *tree, void (*func) (T& item))
+{
+  if (!tree)
+    return;
+
+  treeNode<T>* node = root;
+  stack<treeNode<T>*> nodeStack;
+
+  if(node)
+    {
+      nodeStack.push(node);
+    }
+
+  while (!nodeStack.empty())
+    {
+      if(node)
+	{
+	  node = node->leftChild;
+	  if (node)
+	    nodeStack.push(node);
+	}
+      else
+	{
+	  node = nodeStack.top();
+	  func(node->item);
+	  nodeStack.pop();
+	  node = node->rightChild;
+	  if (node)
+	    nodeStack.push(node);
+	}
+    }
+}
+
+template <class T>
+void BinTree<T>::postOrderNonRecursive (treeNode<T> *tree, void (*func) (T& item))
+{
+  if (!tree)
+    return;
+
+  treeNode<T>* node = root;
+  stack<treeNode<T>*> nodeStack;
+  stack<treeNode<T>*> visitedStack;
+
+  if(node)
+    {
+      nodeStack.push(node);
+      node = node->leftChild;
+    }
+  while (!nodeStack.empty())
+    {
+      if(node)
+	{
+	  nodeStack.push(node);
+	  node = node->leftChild;
+	}
+      else
+	{
+	  node = nodeStack.top();
+	  if (!visitedStack.empty() && visitedStack.top()==node) 
+	    {
+	      func(node->item);
+	      nodeStack.pop();
+	      visitedStack.pop();
+	      node = 0;
+	    }
+	  else
+	    {
+	      visitedStack.push(node);
+	      node = node->rightChild;
+	    }
+	}
+    }
+}
+
+template <class T>
+void BinTree<T>::postOrderNonRecursiveB (treeNode<T> *tree, void (*func) (T& item))
+{
+  if (!tree)
+    return;
+
+  treeNode<T>* node = root;
+  stack<treeNode<T>*> nodeStack;
+  treeNode<T>* prev = 0;
+
+  if(node)
+    nodeStack.push(node);
+    
+  while (!nodeStack.empty())
+    {
+      node = nodeStack.top();
+      if (node)
+	{
+	  // If we are just starting from root or
+	  // previous node is higher than (parent of) current node
+	  if (!prev ||
+	      (prev->leftChild == node) ||
+	      (prev->rightChild == node))
+	    {
+	      if (node->leftChild)
+		nodeStack.push(node->leftChild);
+	      else if (node->rightChild)
+		nodeStack.push(node->rightChild);
+	    }
+	  // If the current node is higher than prev
+	  else if (node->leftChild == prev)
+	    {
+	      if (node->rightChild)
+		nodeStack.push(node->rightChild);
+	    }
+	  // If prev and current node is pointing to the same node
+	  else
+	    {
+	      func(node->item);
+	      nodeStack.pop();
+	    }
+	  prev = node;
+	}
+    }
+}
+
+template <class T>
 void BinTree<T>::postOrder (treeNode<T> *tree, void (*func) (T& item))
 {
   if (tree)
@@ -341,4 +522,71 @@ void BinTree<T>::postOrder (treeNode<T> *tree, void (*func) (T& item))
     }
 }
 
+template <class T>
+void BinTree<T>::levelOrder (treeNode<T> *node, void (*func)(T& item))
+{
+  if (!node)
+    return;
+
+  queue<treeNode<T>*> nodeQueue;
+
+  nodeQueue.push(node);
+  
+  while (!nodeQueue.empty())
+    {
+      treeNode<T>* node = nodeQueue.front();
+      nodeQueue.pop();
+      if (node)
+	{
+	  func(node->item);
+     	}
+      if (node->leftChild)  nodeQueue.push(node->leftChild);
+      if (node->rightChild) nodeQueue.push(node->rightChild);
+    }
+}
+
+template <class T>
+void BinTree<T>::printTreeLevelOrder ()
+{
+  if (!root)
+    return;
+
+  queue<treeNode<T>*> nodeQueue;
+
+  nodeQueue.push(root);
+  int nodesCurrentLevel = 1;
+  int nodesNextLevel = 0;
+
+  while (!nodeQueue.empty())
+    {
+      treeNode<T>* node = nodeQueue.front();
+      nodeQueue.pop();
+      if (node)
+	{
+       	  cout<<node->item<<" ";
+	  nodesCurrentLevel--;
+	}
+
+      if (node->leftChild)  
+	{
+	  nodeQueue.push(node->leftChild);
+	  nodesNextLevel++;
+	}
+
+      if (node->rightChild) 
+	{
+	  nodeQueue.push(node->rightChild);
+	  nodesNextLevel++;
+	}
+
+      if (nodesCurrentLevel==0)
+	{
+	  nodesCurrentLevel= nodesNextLevel;
+	  nodesNextLevel=0;
+	  cout<<endl;
+	}
+    }  
+}
+
 #endif
+
